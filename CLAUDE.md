@@ -1,0 +1,1 @@
+For implementation requests: delegate to csharp-implementer, then to code-reviewer. If the reviewer reports issues, send them back to the implementer and review again. Maximum three review rounds; then present the result and the unresolved issues to me."
