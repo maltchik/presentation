@@ -49,6 +49,7 @@ jobs:
                 gh pr review ${{ github.event.pull_request.number }} --approve --body "Automated review: no blocking issues found."
             - If there are blocking issues, run:
                 gh pr review ${{ github.event.pull_request.number }} --request-changes --body "<summary of blocking issues>"
+          show_full_output: true
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
 
