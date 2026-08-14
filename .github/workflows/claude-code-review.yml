@@ -44,12 +44,16 @@ jobs:
               /code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}
             Leave inline comments for anything you flag.
 
-            After the review, decide whether to approve or request changes:
+            Then write your review summary to /tmp/review-body.md and submit it:
             - If there are no blocking issues, run:
-                gh pr review ${{ github.event.pull_request.number }} --approve --body "Automated review: no blocking issues found."
+                gh pr review ${{ github.event.pull_request.number }} --approve --body-file /tmp/review-body.md
             - If there are blocking issues, run:
-                gh pr review ${{ github.event.pull_request.number }} --request-changes --body "<summary of blocking issues>"
-          show_full_output: true
+                gh pr review ${{ github.event.pull_request.number }} --request-changes --body-file /tmp/review-body.md
+
+            Always pass the summary via --body-file, never inline with --body. Review text
+            containing newlines or semicolons is parsed as multiple shell operations and
+            gets denied, which silently drops the review.
+          claude_args: '--allowedTools "Read,Grep,Glob,Write,Edit,Task,Skill,TodoWrite,WebFetch,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git ls-files:*),Bash(git check-ignore:*),Bash(git rev-parse:*),Bash(git branch:*),Bash(ls:*)"'
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
 
