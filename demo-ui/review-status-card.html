@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review Status Card</title>
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #101729;
+    font-family: Inter, "Segoe UI", sans-serif;
+  }
+  .card {
+    box-sizing: border-box;
+    width: 360px;
+    height: 220px;
+    padding: 16px;
+    background: #1B2440;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+  .card__title {
+    margin: 0 0 22px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #EDF1F9;
+  }
+  .card__pill {
+    align-self: flex-start;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 16px;
+    border-radius: 14px;
+    background: #57D98F;
+    color: #0E1526;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .card__summary {
+    margin: 16px 0 0;
+    font-size: 14px;
+    color: #8B97AD;
+  }
+  .card__button {
+    margin-top: auto;
+    align-self: flex-start;
+    box-sizing: border-box;
+    width: 132px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #8F97FF;
+    color: #0E1526;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .card__button:focus {
+    outline: none;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h2 class="card__title">PR Review Status</h2>
+    <span class="card__pill">APPROVED</span>
+    <p class="card__summary">3 checks passed &middot; 0 issues</p>
+    <a class="card__button" href="#" target="_blank" rel="noopener">View details</a>
+  </div>
+</body>
+</html>
