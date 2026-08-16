@@ -53,7 +53,7 @@ jobs:
             Always pass the summary via --body-file, never inline with --body. Review text
             containing newlines or semicolons is parsed as multiple shell operations and
             gets denied, which silently drops the review.
-          claude_args: '--allowedTools "Read,Grep,Glob,Write,Edit,Task,Skill,TodoWrite,WebFetch,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git ls-files:*),Bash(git check-ignore:*),Bash(git rev-parse:*),Bash(git branch:*),Bash(ls:*)"'
+          claude_args: '--model claude-haiku-4-5 --allowedTools "Read,Grep,Glob,Write,Edit,Task,Skill,TodoWrite,WebFetch,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git ls-files:*),Bash(git check-ignore:*),Bash(git rev-parse:*),Bash(git branch:*),Bash(ls:*)"'
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
 
