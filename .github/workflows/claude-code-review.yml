@@ -32,6 +32,10 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Record start time
+        id: start
+        run: echo "at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
       - name: Run Claude Code Review
         id: claude-review
         uses: anthropics/claude-code-action@v1
@@ -53,7 +57,37 @@ jobs:
             Always pass the summary via --body-file, never inline with --body. Review text
             containing newlines or semicolons is parsed as multiple shell operations and
             gets denied, which silently drops the review.
-          claude_args: '--model claude-haiku-4-5 --allowedTools "Read,Grep,Glob,Write,Edit,Task,Skill,TodoWrite,WebFetch,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git ls-files:*),Bash(git check-ignore:*),Bash(git rev-parse:*),Bash(git branch:*),Bash(ls:*)"'
+          claude_args: '--model claude-sonnet-5 --allowedTools "Read,Grep,Glob,Write,Edit,Task,Skill,TodoWrite,WebFetch,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git ls-files:*),Bash(git check-ignore:*),Bash(git rev-parse:*),Bash(git branch:*),Bash(ls:*)"'
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
+
+      # The action exits 0 both when it reviews and when it quietly does nothing,
+      # so a green check on its own says nothing about whether the PR was reviewed.
+      - name: Verify a review was posted
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          SINCE: ${{ steps.start.outputs.at }}
+        run: |
+          # claude-code-action refuses to run when a PR touches any workflow file,
+          # so a missing review is expected there. Say so rather than failing.
+          if gh api "repos/$REPO/pulls/$PR/files" --paginate --jq '.[].filename' \
+            | grep -q '^\.github/workflows/'; then
+            echo "::notice::Review skipped by design: this PR edits .github/workflows/, which claude-code-action will not run against. Verify the review on a PR that leaves the workflows alone."
+            exit 0
+          fi
+
+          # Only reviews from this run count; an approval of an earlier push
+          # must not vouch for the commit that is being tested now.
+          posted=$(gh api "repos/$REPO/pulls/$PR/reviews" --paginate \
+            --jq '.[] | select(.user.login == "claude[bot]") | .submitted_at' \
+            | awk -v since="$SINCE" '$0 >= since' | wc -l)
+
+          if [ "$posted" -eq 0 ]; then
+            echo "::error::Claude ran but posted no review for this commit. Do not read this job as an approval - check the run log."
+            exit 1
+          fi
+          echo "Claude posted $posted review(s) for this commit."
 
