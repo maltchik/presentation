@@ -39,6 +39,14 @@ jobs:
       - name: Run Claude Code Review
         id: claude-review
         uses: anthropics/claude-code-action@v1
+        env:
+          # The review fans out to subagents. Left to its own devices Claude
+          # launches them as background agents, reports "I'll get notified when
+          # the gating agent finishes", and stops producing turns. Nothing
+          # delivers that notification in CI: the session ends the moment Claude
+          # stops, the action exits 0, and no review is ever written. This forces
+          # every subagent to run inline so the parent blocks on the result.
+          CLAUDE_CODE_DISABLE_AGENT_VIEW: '1'
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
@@ -53,6 +61,15 @@ jobs:
             Review every PR you are given. The command offers to skip PRs it judges
             automated or trivially correct; do not take that exit here. A PR that
             describes itself as a throwaway or a test still gets a real review.
+
+            Run every subagent synchronously and wait for its result before moving on.
+            Never background one and never end your turn waiting to be notified: this
+            session is not interactive, so it ends as soon as you stop, and a
+            backgrounded agent's result is lost along with the whole review.
+
+            You are not done until `gh pr review` has exited successfully. Reaching
+            the end of the review without posting it is the failure this workflow
+            exists to catch.
 
             Then write your review summary to /tmp/review-body.md and submit it:
             - If there are no blocking issues, run:
