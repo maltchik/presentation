@@ -45,8 +45,14 @@ jobs:
           plugins: 'code-review@claude-code-plugins'
           prompt: |
             Review this PR for bugs, security issues, and convention violations by running:
-              /code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}
-            Leave inline comments for anything you flag.
+              /code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }} --comment
+
+            The --comment flag is required. Without it the command prints its findings to
+            the terminal and posts nothing, which looks exactly like a clean review.
+
+            Review every PR you are given. The command offers to skip PRs it judges
+            automated or trivially correct; do not take that exit here. A PR that
+            describes itself as a throwaway or a test still gets a real review.
 
             Then write your review summary to /tmp/review-body.md and submit it:
             - If there are no blocking issues, run:
@@ -57,7 +63,14 @@ jobs:
             Always pass the summary via --body-file, never inline with --body. Review text
             containing newlines or semicolons is parsed as multiple shell operations and
             gets denied, which silently drops the review.
-          claude_args: '--model claude-sonnet-5 --allowedTools "Read,Grep,Glob,Write,Edit,Task,Skill,TodoWrite,WebFetch,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git ls-files:*),Bash(git check-ignore:*),Bash(git rev-parse:*),Bash(git branch:*),Bash(ls:*)"'
+          # --allowedTools replaces the CLI defaults rather than adding to them, so the
+          # inline-comment MCP tool has to be listed explicitly. Leave it out and the
+          # review runs to completion and silently drops every inline comment.
+          claude_args: '--model claude-sonnet-5 --allowedTools "Read,Grep,Glob,Write,Edit,Task,Skill,TodoWrite,WebFetch,mcp__github_inline_comment__create_inline_comment,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh api:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git ls-files:*),Bash(git check-ignore:*),Bash(git rev-parse:*),Bash(git branch:*),Bash(ls:*)"'
+          # Temporary: the run that motivated this fix logged only a success line, so
+          # there was no way to see where the review stopped. Drop this once the
+          # workflow has posted a review with inline comments on a real diff.
+          show_full_output: true
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
 
