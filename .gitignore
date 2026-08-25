@@ -2,6 +2,7 @@
 bin/
 obj/
 out/
+.env
 
 # Visual Studio
 .vs/
