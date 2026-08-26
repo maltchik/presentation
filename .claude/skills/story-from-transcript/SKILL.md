@@ -12,7 +12,7 @@ specification, and it does not fill gaps.
 
 - A Confluence page holding the transcript and summary of a single call. The caller gives
   the page id or the title.
-- The Jira project key to create the story in. Default `SD`.
+- The Jira project key to create the story in. Default `KAN`.
 
 ## Procedure
 

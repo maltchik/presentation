@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="MiniOrchestrator.Tests/**/*.cs" />
+    <Compile Remove="FeedbackService/**/*.cs" />
     <Compile Remove=".claude/worktrees/**/*.cs" />
   </ItemGroup>
 </Project>
