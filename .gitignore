@@ -4,6 +4,12 @@ obj/
 out/
 .env
 
+# FeedbackService SQLite store (default path is FeedbackService/feedback.db)
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+
 # Visual Studio
 .vs/
 *.user
@@ -27,6 +33,11 @@ out/
 # MSBuild logs
 *.binlog
 *.log
+
+# Node / Playwright (e2e specs)
+node_modules/
+playwright-report/
+test-results/
 
 # OS files
 .DS_Store
