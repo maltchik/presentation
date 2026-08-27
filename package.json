@@ -1,0 +1,12 @@
+{
+  "name": "feedback-widget-e2e",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Playwright e2e specs for KAN-1 (in-app release feedback widget) against FeedbackService's demo host page.",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0"
+  }
+}
